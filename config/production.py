@@ -1,6 +1,11 @@
 import os
 import dj_database_url
-from .settings import *
+from .settings import (
+    BASE_DIR,
+    ALLOWED_HOSTS,
+    MIDDLEWARE,
+)
+
 
 DEBUG = True
 SECRET_KEY = os.environ['SECRET_KEY']
