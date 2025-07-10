@@ -49,6 +49,7 @@
         <li>Status: Not Completed</li>
         {% endif %}
       </ul>
+      <a href="{% url 'update' task.id %}">編集</a>
     </div>
     {% endfor %}
   </body>
