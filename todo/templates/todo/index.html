@@ -1,56 +1,133 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" data-theme="light">
   <head>
     <title>To Do Application</title>
     <meta charset="UTF-8" />
     <meta name="author" content="INIAD" />
+    <meta name="viewport" content="width=-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'todo/css/output.css' %}" />
   </head>
 
-  <body>
-    <h1>Sample To Do Application</h1>
-    <p>You can submit tasks from the following form.</p>
-    <form action="{% url 'index' %}" method="post">
-      {% csrf_token %}
-      <div>
-        <label for="titleInput">Title</label><br />
-        <input
-          id="titleInput"
-          name="title"
-          type="text"
-          placeholder="Input title"
-        />
+  <body class="bg-base-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+      <!-- ヘッダー -->
+      <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-primary mb-2">
+          📝 To Do Application
+        </h1>
+        <p class="text-base-content/70">タスクを効率的に管理しましょう</p>
       </div>
-      <div>
-        <label for="dueInput">Due at:</label><br />
-        <input id="dueInput" name="due_at" type="datetime-local" />
-      </div>
-      <div>
-        <button type="submit">Submit</button>
-      </div>
-    </form>
-    <br />
 
-    <div>
-      <a href="{% url 'index' %}?order=due">Sort by Due Date</a> |
-      <a href="{% url 'index' %}?order=post">Sort by Posted Date</a>
-    </div>
+      <!-- タスク追加フォーム -->
+      <div class="card mb-8">
+        <div class="card-body">
+          <h2 class="card-title text-primary mb-4">新しいタスクを追加</h2>
+          <form action="{% url 'index' %}" method="post" class="space-y-4">
+            {% csrf_token %}
+            <div class="form-control">
+              <label class="label" for="titleInput">
+                <span class="label-text font-semibold">タイトル</span>
+              </label>
+              <input
+                id="titleInput"
+                name="title"
+                type="text"
+                placeholder="タスクのタイトルを入力してください"
+                class="input input-bordered w-full focus:input-primary"
+                required
+              />
+            </div>
+            <div class="form-control">
+              <label class="label" for="dueInput">
+                <span class="label-text font-semibold">期限</span>
+              </label>
+              <input
+                id="dueInput"
+                name="due_at"
+                type="datetime-local"
+                class="input input-bordered w-full focus:input-primary"
+              />
+            </div>
+            <div class="form-control mt-6">
+              <button type="submit" class="btn btn-primary btn-block">
+                タスクを追加
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
 
-    {% for task in tasks %}
-    <div class="text">
-      <h2><a href="{% url 'detail' task.id %}">{{ task.title }}</a></h2>
-      <ul>
-        <li>Posted at: {{ task.posted_at }}</li>
-        {% if task.due_at %}
-        <li>Due at: {{ task.due_at }}</li>
-        {% endif %} {% if task.completed %}
-        <li>Status: Completed</li>
-        {% else %}
-        <li>Status: Not Completed</li>
-        {% endif %}
-      </ul>
-      <a href="{% url 'update' task.id %}">編集</a>
+      <!-- ソート機能 -->
+      <div class="flex flex-wrap gap-2 mb-12 justify-center">
+        <div class="btn-group">
+          <a href="{% url 'index' %}?order=due" class="btn btn-outline btn-sm">
+            期限順
+          </a>
+          <a href="{% url 'index' %}?order=post" class="btn btn-outline btn-sm">
+            投稿順
+          </a>
+        </div>
+      </div>
+
+      <!-- タスクリスト -->
+      <div class="space-y-4">
+        {% for task in tasks %}
+        <div
+          class="card bg-base-100 shadow-md hover:shadow-lg transition-shadow duration-200 border border-base-300"
+        >
+          <div class="card-body">
+            <div class="flex justify-between items-start">
+              <div class="flex-1">
+                <h2 class="card-title text-lg mb-2">
+                  <a
+                    href="{% url 'detail' task.id %}"
+                    class="link link-primary hover:link-secondary"
+                  >
+                    {{ task.title }}
+                  </a>
+                </h2>
+
+                <div class="flex flex-wrap gap-2 mb-3">
+                  <div class="badge badge-outline">
+                    投稿: {{ task.posted_at|date:"Y/m/d H:i" }}
+                  </div>
+
+                  {% if task.due_at %}
+                  <div class="badge badge-warning">
+                    期限: {{ task.due_at|date:"Y/m/d H:i" }}
+                  </div>
+                  {% endif %} {% if task.completed %}
+                  <div class="badge badge-success">完了</div>
+                  {% else %}
+                  <div class="badge badge-ghost">未完了</div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="flex gap-2">
+                <a
+                  href="{% url 'update' task.id %}"
+                  class="btn btn-sm btn-outline btn-primary"
+                >
+                  編集
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-12">
+          <div class="text-6xl mb-4">📋</div>
+          <h3 class="text-xl font-semibold text-base-content/70 mb-2">
+            タスクがありません
+          </h3>
+          <p class="text-base-content/50">
+            上のフォームから新しいタスクを追加してください
+          </p>
+        </div>
+        {% endfor %}
+      </div>
     </div>
-    {% endfor %}
   </body>
 </html>

@@ -1,30 +1,200 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" data-theme="light">
   <head>
     <title>To Do Application</title>
     <meta charset="UTF-8" />
     <meta name="author" content="INIAD" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'todo/css/output.css' %}" />
   </head>
 
-  <body>
-    <h1>{{ task.title }}</h1>
-    <ul>
-      <li>Posted at: {{ task.posted_at }}</li>
-      {% if task.due_at %}
-      <li>Due at: {{ task.due_at }}</li>
-      {% endif %} {% if task.completed %}
-      <li>Status: Completed</li>
-      {% else %}
-      <li>Status: Not Completed</li>
-      {% endif %}
-    </ul>
+  <body class="bg-base-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-3xl">
+      <!-- ヘッダー -->
+      <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-primary mb-2">📋 タスクの詳細</h1>
+        <p class="text-base-content/70">タスクの詳細情報を確認できます</p>
+      </div>
 
-    <div>
-      <a href="{% url 'index' %}">Top</a>
-      <a href="{% url 'close' task.id %}">Close</a>
-      <a href="{% url 'delete' task.id %}">Delete</a>
-      <a href="{% url 'update' task.id %}">Edit</a>
+      <!-- タスク詳細カード -->
+      <div class="card shadow-lg mb-8">
+        <div class="card-body">
+          <h2 class="card-title text-2xl text-primary mb-6">
+            {{ task.title }}
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <!-- 投稿日時 -->
+            <div class="stat bg-base-200 rounded-lg">
+              <div class="stat-title">投稿日時</div>
+              <div class="stat-value text-lg">
+                {{ task.posted_at|date:"Y/m/d" }}
+              </div>
+              <div class="stat-desc">{{ task.posted_at|date:"H:i" }}</div>
+            </div>
+
+            <!-- 期限 -->
+            {% if task.due_at %}
+            <div class="stat bg-warning/10 rounded-lg">
+              <div class="stat-title text-warning">期限</div>
+              <div class="stat-value text-lg text-warning">
+                {{ task.due_at|date:"Y/m/d" }}
+              </div>
+              <div class="stat-desc text-warning">
+                {{ task.due_at|date:"H:i" }}
+              </div>
+            </div>
+            {% else %}
+            <div class="stat bg-base-200 rounded-lg">
+              <div class="stat-title">期限</div>
+              <div class="stat-value text-lg">未設定</div>
+              <div class="stat-desc">期限は設定されていません</div>
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- ステータス -->
+          <div class="flex justify-center mb-6">
+            {% if task.completed %}
+            <div class="badge badge-success badge-lg p-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+              完了済み
+            </div>
+            {% else %}
+            <div class="badge badge-warning badge-lg p-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              未完了
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- アクションボタン -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <a href="{% url 'index' %}" class="btn btn-outline">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4 mr-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+            />
+          </svg>
+          一覧に戻る
+        </a>
+
+        {% if not task.completed %}
+        <a href="{% url 'close' task.id %}" class="btn btn-success">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4 mr-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+          完了にする
+        </a>
+        {% else %}
+        <a href="{% url 'close' task.id %}" class="btn btn-warning">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4 mr-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+            />
+          </svg>
+          未完了に戻す
+        </a>
+        {% endif %}
+
+        <a href="{% url 'update' task.id %}" class="btn btn-primary">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4 mr-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+            />
+          </svg>
+          編集
+        </a>
+
+        <a
+          href="{% url 'delete' task.id %}"
+          class="btn btn-error"
+          onclick="return confirm('本当に削除しますか？')"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4 mr-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+            />
+          </svg>
+          削除
+        </a>
+      </div>
     </div>
   </body>
 </html>
