@@ -8,6 +8,7 @@ class Task(models.Model):
     completed = models.BooleanField(default=False)
     posted_at = models.DateTimeField(auto_now_add=True)
     due_at = models.DateTimeField(null=True, blank=True)
+    author = models.CharField(max_length=100, blank=True)
 
     def is_overdue(self, dt):
         if self.due_at is None:
